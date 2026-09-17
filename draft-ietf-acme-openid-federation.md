@@ -277,8 +277,10 @@ sig (required, string):  the compact JSON serialization (as described in
     "signed-acme-challenge+jwt".
 
 trustChain (optional, array of string):  an array of strings containing signed
-    JWTs, representing a Trust Chain from the Requestor to one of the Issuer's
-    Trust Anchors (see {{Section 4 of OPENID-FED}}{: relative="#section-4"}).
+    JWTs, representing a Trust Chain from the Requestor to a Trust Anchor
+    (see {{Section 4 of OPENID-FED}}{: relative="#section-4"}).
+    This has the same meaning as the `trust_chain` JWS header parameter in
+    {{Section 4.3 of OPENID-FED}}{: relative="#section-4.3"}.
     The Resolved Metadata of the Trust Chain subject MUST contain
     `acme_requestor` metadata that contains the key used to compute `sig`.
     It is RECOMMENDED that the Requestor includes this field.
@@ -288,7 +290,22 @@ trustChain (optional, array of string):  an array of strings containing signed
     If the Requestor cannot construct a Trust Chain to any Trust Anchor, it MAY
     omit the `trustChain` field from the challenge response.
 
-A non-normative example for an authorization with `trustChain` specified:
+peerTrustChain (optional, array of string):  an array of strings containing
+    signed JWTs, representing a Trust Chain from the Issuer to a Trust Anchor.
+    This has the same meaning as the `peer_trust_chain` JWS header parameter in
+    {{Section 4.4 of OPENID-FED}}{: relative="#section-4.4"}.
+    It is the Requestor's evaluation of the Issuer. It is RECOMMENDED that the
+    Requestor includes this field when it can construct such a Trust Chain.
+    If both `trustChain` and `peerTrustChain` are present, the Trust Anchor of
+    both Trust Chains MUST be the same, as specified for OpenID Federation
+    application protocols that use both parameters
+    ({{Section 12.1.1.1 of OPENID-FED}}{: relative="#section-12.1.1.1"}).
+    {{Section 4.4 of OPENID-FED}}{: relative="#section-4.4"} says the Trust
+    Anchors SHOULD be the same when both parameters appear on a JWS. This
+    profile uses the MUST rule from those application protocols.
+
+A non-normative example for an authorization with `trustChain` and
+`peerTrustChain` specified:
 
 ~~~~
    POST /acme/chall/prV_B7yEyA4
@@ -304,7 +321,8 @@ A non-normative example for an authorization with `trustChain` specified:
      }),
      "payload": base64url({
       "sig": "wQAvHlPV1tVxRW0vZUa4BQ...",
-      "trustChain": ["eyJhbGciOiJFU...", "eyJhbGci..."]
+      "trustChain": ["eyJhbGciOiJFU...", "eyJhbGci..."],
+      "peerTrustChain": ["eyJhbGciOiJFU...", "eyJhbGci..."]
      }),
      "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
    }
@@ -315,8 +333,29 @@ Requestor is trusted. If the Requestor did not provide a `trustChain`, the
 Issuer MUST perform Federation Entity Discovery ({{Section 10 of OPENID-FED}}{:
 relative="#section-10"}) to obtain a Trust Chain for the Requestor.
 
-Once it has obtained a Trust Chain, the Issuer evaluates the entity's Resolved
-Metadata, and verifies:
+The Issuer MUST verify every Trust Chain it uses according to
+{{Section 4 of OPENID-FED}}{: relative="#section-4"}. A Requestor-supplied
+`trustChain` MUST terminate at a Trust Anchor the Issuer is configured to
+trust.
+
+If the challenge response includes `peerTrustChain`, the Issuer MUST verify
+that Trust Chain, MUST verify that it begins at the Issuer, and MUST verify
+that it terminates at a Trust Anchor the Issuer is configured to trust, as
+specified for `peer_trust_chain` in
+{{Section 12.2.3 of OPENID-FED}}{: relative="#section-12.2.3"}.
+
+If both `trustChain` and `peerTrustChain` are present, the Issuer MUST verify
+that they terminate at the same Trust Anchor. The Issuer MUST use that Trust
+Anchor to evaluate the Requestor. The Issuer SHOULD apply the metadata and
+policy values from the Peer Trust Chain when using its own `acme_issuer`
+metadata in this protocol, as described in
+{{Section 12.1.1.1 of OPENID-FED}}{: relative="#section-12.1.1.1"}.
+If `peerTrustChain` is present and `trustChain` is absent, the Issuer MUST
+use the Trust Anchor of `peerTrustChain` when performing Federation Entity
+Discovery for the Requestor.
+
+Once it has obtained a valid Trust Chain for the Requestor, the Issuer
+evaluates the Requestor's Resolved Metadata from that Trust Chain, and verifies:
 
 * That the requested `openid-federation` ACME Identifier value matches the `sub`
   parameter of the Requestor's Entity Configuration.
@@ -399,9 +438,11 @@ the `acme_requestor` metadata and using the `jwks` metadata parameter.
 }
 ~~~~
 
-The Issuer MUST only use the Requestor's `acme_requestor` to validate an ACME
-challenge. Therefore, after completing the challenge, the Requestor MAY remove
-the `acme_requestor` metadata from its Entity Configuration.
+The Issuer MUST only use `acme_requestor` keys from the Requestor's Resolved
+Metadata, derived from the Trust Chain and Trust Anchor selected in
+{{metadata-evaluation}}, to validate an ACME challenge. Therefore, after
+completing the challenge, the Requestor MAY remove the `acme_requestor`
+metadata from its Entity Configuration.
 
 # Issuer Discovery
 
@@ -424,8 +465,10 @@ Entity Type metadata within it. The `acme_issuer` metadata contains one
 parameter, `directory_url`, which is the URL of the ACME Directory, as defined
 in {{Section 7.1.1 of !RFC8555}}.
 
-Requestors MUST use the ACME Directory provided in the Issuer's Entity
-Configuration for client configuration of ACME endpoints.
+Requestors MUST use the ACME Directory URL from the Issuer's Resolved Metadata
+for client configuration of ACME endpoints. When the Requestor later includes
+`peerTrustChain` in a challenge response, that Trust Chain MUST be the one from
+which it derived that Resolved Metadata ({{metadata-evaluation}}).
 
 The following is a non-normative example of an Entity Configuration including
 the `acme_issuer` metadata:
@@ -455,6 +498,38 @@ the `acme_issuer` metadata:
   }
 }
 ~~~~
+
+# Metadata Evaluation {#metadata-evaluation}
+
+This document uses the Trust Chain and Peer Trust Chain mechanisms of
+{{OPENID-FED}} without defining a separate trust model.
+
+`trustChain` in the challenge response is the Trust Chain from the Requestor
+to a Trust Anchor, corresponding to `trust_chain`
+({{Section 4.3 of OPENID-FED}}{: relative="#section-4.3"}).
+`peerTrustChain` is the Trust Chain from the Issuer to a Trust Anchor,
+corresponding to `peer_trust_chain`
+({{Section 4.4 of OPENID-FED}}{: relative="#section-4.4"}).
+
+{{Section 4.4 of OPENID-FED}}{: relative="#section-4.4"} says that if both
+parameters are present on a JWS, the Trust Anchor for both Trust Chains SHOULD
+be the same. OpenID Federation application protocols that carry both parameters
+require that the Trust Anchors MUST be the same
+({{Section 12.1.1.1 of OPENID-FED}}{: relative="#section-12.1.1.1"}).
+This profile is such an application protocol. When both `trustChain` and
+`peerTrustChain` are present, the Issuer MUST use that shared Trust Anchor.
+Using both Trust Chains enables the Federation Integrity and Metadata Integrity
+properties described in {{OPENID-FED}}.
+
+When `peerTrustChain` is present, the Issuer MUST use its Trust Anchor, provided
+the Issuer is configured to trust it. When `peerTrustChain` is absent, the
+Issuer selects a Trust Anchor it is configured to trust, using `trustChain` as
+a hint when provided.
+
+The Issuer takes `acme_requestor` keys from Resolved Metadata of the Requestor
+along the Trust Chain to the selected Trust Anchor. The Requestor takes
+`directory_url` from Resolved Metadata of the Issuer along the Peer Trust Chain
+to that same Trust Anchor when `peerTrustChain` is used.
 
 # Publication of the Certificates within the Federation {#publish-cert}
 
@@ -531,6 +606,12 @@ considered.
 
 The cryptographic keys in the `acme_requestor` metadata SHOULD be rotated
 periodically.
+
+When both `trustChain` and `peerTrustChain` are present, this profile applies
+the OpenID Federation 1.0 rules for `trust_chain` and `peer_trust_chain`,
+including that they terminate at the same Trust Anchor. That is what provides
+Federation Integrity and Metadata Integrity for this protocol
+({{metadata-evaluation}}).
 
 # IANA Considerations
 
