@@ -51,9 +51,9 @@ contributor:
 
 normative:
   OPENID-FED:
-    title: "OpenID Federation 1.0 - draft 43"
-    target: https://openid.net/specs/openid-federation-1_0-43.html
-    date: 2025-06-02
+    title: "OpenID Federation 1.0"
+    target: https://openid.net/specs/openid-federation-1_0.html
+    date: 2026-02-17
     author:
       -
         ins: R. Hedberg
@@ -119,9 +119,9 @@ trust framework. OpenID Federation 1.0 allows each participant to recognize
 other participants using a trust evaluation mechanism, with RESTful services and
 cryptographic materials.
 
-Federation members declare what kind Entities they are using a basic OpenID
-Federation component called an Entity Configuration, a signed JSON Web Token
-published in a well-known resource. This document defines new OpenID Federation
+Federation members declare what kind of Entities they are using a basic OpenID
+Federation component called an Entity Configuration, a signed JSON Web Token.
+This document defines new OpenID Federation
 Entity Types for certificate Requestors and Issuers, facilitating automated
 discovery of an issuer's ACME API.
 
@@ -178,18 +178,17 @@ ACME Identifier:
   client proves control of to the ACME server.
 
 Entity Identifier:
-: A URL that uniquely identifies an Entity in OpenID Federation, as defined in
+: A globally unique string identifier that is bound to one Entity in OpenID
+  Federation, as defined in
   {{Section 1.2 of OPENID-FED}}{: relative="#section-1.2-3.4"}.
 
 Requestor:
-: A Federation Entity which wants to request X.509 Certificates. It operates
-  a web server for hosting its Entity Configuration. It also operates an ACME
-  client, extended according to this document.
+: A Federation Entity which wants to request X.509 Certificates. It operates an
+  ACME client, extended according to this document.
 
 Certificate Issuer (or Issuer):
-: A Federation Entity which issues X.509 Certificates. It operates a web server
-  for hosting its Entity Configuration. It also operates an ACME server,
-  extended according to this document.
+: A Federation Entity which issues X.509 Certificates. It operates an ACME
+  server, extended according to this document.
 
 # Conventions and Definitions
 
@@ -198,9 +197,9 @@ Certificate Issuer (or Issuer):
 # OpenID Federation ACME Identifier {#identifier-type}
 
 This document defines a new ACME Identifier type for OpenID Federation Entities,
-`openid-federation`, whose value is the `sub` parameter of the Requestor's
-Entity Configuration, as defined in {{Section 1.2 of OPENID-FED}}{:
-relative="#section-1.2"}.
+`openid-federation`, whose value is the Entity Identifier of the Requestor (the
+`sub` parameter of the Requestor's Entity Configuration, as defined in
+{{Section 3.1.1 of OPENID-FED}}{: relative="#section-3.1.1"}).
 
 For example, the ACME Identifier corresponding to the example Entity
 Configuration in {{requestor-metadata}} is:
@@ -414,11 +413,9 @@ In order to be discoverable, the Issuer MUST publish the entity type
 `acme_issuer` in its Entity Configuration, according to {{issuer-metadata}}.
 
 {{OPENID-FED}} describes a variety of patterns and generic mechanisms for
-discovering Federation Entities. This section describes how Issuers may make
+discovering Federation Entities (see {{Section 17.2 of OPENID-FED}}{:
+relative="#section-17.2"}). This section describes how Issuers may make
 themselves discoverable in a Federation by Requestors.
-
-TODO: include a specific section reference once
-https://github.com/openid/federation/pull/265 lands in OPENID-FED
 
 ## Issuer Metadata
 
@@ -478,8 +475,8 @@ by including the Entity Identifier in the X.509 Certificate.
 To do so, the Issuer includes a Subject Alternative Name extension containing an
 `otherName` with a `type-id` of `id-on-OpenIdFederationEntityId`. The value of
 the name is an Octet String containing the UTF-8 encoding of the Entity
-Identifier (i.e., the URI in the corresponding `openid-federation` ACME
-Identifier from the `newOrder` request).
+Identifier (i.e., the corresponding `openid-federation` ACME Identifier from
+the `newOrder` request).
 
 ~~~~
    id-on-OpenIdFederationEntityId OBJECT IDENTIFIER ::= { id-on XXX }
@@ -492,7 +489,7 @@ Identifier from the `newOrder` request).
 The identity of the Requestor is verified through proof of possession of a
 private key corresponding to a public key attested within a Trust Chain. The
 Trust Chain has an expiration time, and its content MUST NOT be trusted past the
-expiration time ({{Section 10.2 of OPENID-FED}}{: relative="#section-10.2"}).
+expiration time ({{Section 10.4 of OPENID-FED}}{: relative="#section-10.4"}).
 
 The `notBefore` and `notAfter` fields of issued certificates MUST represent
 dates before the Trust Chain's expiration time. If the Requestor's newOrder
