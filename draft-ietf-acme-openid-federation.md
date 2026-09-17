@@ -223,9 +223,13 @@ part of the federation:
 
 - The Requestor provides a Trust Chain when solving the ACME challenge. This is
   RECOMMENDED since it reduces the effort of the Certificate Issuer in
-  evaluating the trust to the Requestor.
+  evaluating the trust to the Requestor. The Trust Chain includes the
+  Requestor's Entity Configuration, so the Requestor need not publish that
+  document at its configuration endpoint ({{requestor-metadata}}).
 
-- The Requestor doesn't provide a Trust Chain in the challenge solution.
+- The Requestor doesn't provide a Trust Chain in the challenge solution. In
+  that case the Requestor MUST publish its Entity Configuration at the
+  configuration endpoint so the Issuer can perform Federation Entity Discovery.
 
 The openid-federation-01 ACME challenge object has the following format:
 
@@ -282,11 +286,15 @@ trustChain (optional, array of string):  an array of strings containing signed
     The Resolved Metadata of the Trust Chain subject MUST contain
     `acme_requestor` metadata that contains the key used to compute `sig`.
     It is RECOMMENDED that the Requestor includes this field.
+    If the Requestor does not publish its Entity Configuration at the
+    configuration endpoint ({{requestor-metadata}}), it MUST include
+    `trustChain`.
     If the Requestor cannot construct a Trust Chain to one of the Trust Anchors
     indicated by the Issuer, or if no Trust Anchors were indicated, it MAY use
     some other Trust Anchor that it believes the Issuer trusts.
-    If the Requestor cannot construct a Trust Chain to any Trust Anchor, it MAY
-    omit the `trustChain` field from the challenge response.
+    If the Requestor publishes its Entity Configuration and cannot construct a
+    Trust Chain to any Trust Anchor, it MAY omit the `trustChain` field from the
+    challenge response.
 
 A non-normative example for an authorization with `trustChain` specified:
 
@@ -313,7 +321,10 @@ A non-normative example for an authorization with `trustChain` specified:
 On receiving a challenge response, the Certificate Issuer verifies that the
 Requestor is trusted. If the Requestor did not provide a `trustChain`, the
 Issuer MUST perform Federation Entity Discovery ({{Section 10 of OPENID-FED}}{:
-relative="#section-10"}) to obtain a Trust Chain for the Requestor.
+relative="#section-10"}) to obtain a Trust Chain for the Requestor. That
+discovery requires the Requestor to have published its Entity Configuration at
+the configuration endpoint ({{Section 9 of OPENID-FED}}{:
+relative="#section-9"}).
 
 Once it has obtained a Trust Chain, the Issuer evaluates the entity's Resolved
 Metadata, and verifies:
@@ -349,10 +360,21 @@ A non-normative example for the challenge object post-validation:
 
 # Requestor Entity Configuration Metadata {#requestor-metadata}
 
-The Requestor MUST publish in its Entity Configuration an `acme_requestor`
-metadata containing a JWK set, according to {{Section 5.2.1 of
+The Requestor's Entity Configuration MUST include `acme_requestor` metadata
+containing a JWK set, according to {{Section 5.2.1 of
 OPENID-FED}}{: relative="#section-5.2.1"}. The keys in the set are used to
 respond to ACME challenges.
+
+{{Section 9 of OPENID-FED}}{: relative="#section-9"} requires Trust Anchors and
+Intermediate Entities to publish their Entity Configuration at the configuration
+endpoint, and says Leaf Entities SHOULD do so. This document uses the profile
+exception in that section. A Requestor that includes a `trustChain` in the
+`openid-federation-01` challenge response ({{challenge-type}}) conveys its
+Entity Configuration as the first statement of that Trust Chain, so it MAY omit
+publication at `/.well-known/openid-federation`.
+
+A Requestor that omits `trustChain` MUST publish its Entity Configuration at the
+configuration endpoint so the Issuer can perform Federation Entity Discovery.
 
 The following is a non-normative example of an Entity Configuration including
 the `acme_requestor` metadata and using the `jwks` metadata parameter.
