@@ -194,12 +194,20 @@ Certificate Issuer (or Issuer):
 
 {::boilerplate bcp14-tagged}
 
+JSON member names defined by this document follow the convention of the protocol
+they extend. Members of ACME objects, including challenge objects, challenge
+responses, and problem documents, use camelCase as in {{!RFC8555}}. Members of
+OpenID Federation Entity Type metadata use snake_case as in {{OPENID-FED}}.
+
 # OpenID Federation ACME Identifier {#identifier-type}
 
 This document defines a new ACME Identifier type for OpenID Federation Entities,
 `openid-federation`, whose value is the Entity Identifier of the Requestor (the
 `sub` parameter of the Requestor's Entity Configuration, as defined in
 {{Section 3.1.1 of OPENID-FED}}{: relative="#section-3.1.1"}).
+The hyphenated label matches the corresponding validation method
+`openid-federation-01` ({{challenge-type}}). Other multi-word ACME identifier
+types are hyphenated as well.
 
 For example, the ACME Identifier corresponding to the example Entity
 Configuration in {{requestor-metadata}} is:
@@ -507,7 +515,7 @@ encapsulate any OAuth error code returned while resolving OpenID Federation
 Entities. The title of this error type is "OpenID Federation Error". The
 `detail` member of the problem document MAY include the description of the
 particular OAuth error code that caused the error. The problem document for this
-error type SHOULD include an extension member named `error_code`, which MUST be
+error type SHOULD include an extension member named `errorCode`, which MUST be
 set to the OAuth error code, taken from the error codes defined in
 {{Section 8.9 of OPENID-FED}}{: relative="#section-8.9"}.
 
