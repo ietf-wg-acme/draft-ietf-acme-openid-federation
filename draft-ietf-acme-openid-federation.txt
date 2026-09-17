@@ -5,12 +5,12 @@
 Automated Certificate Management Environment                 G. De Marco
 Internet-Draft                                               independent
 Intended status: Standards Track                               B. Pitman
-Expires: 19 June 2026                                                   
+Expires: 21 March 2027                                                  
                                                             T. Geoghegan
                                                                  D. Cook
                                                               J.C. Jones
                                                                     ISRG
-                                                        16 December 2025
+                                                       17 September 2026
 
 
     Automatic Certificate Management Environment (ACME) with OpenID
@@ -66,11 +66,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 June 2026.
+   This Internet-Draft will expire on 21 March 2027.
 
 Copyright Notice
 
-   Copyright (c) 2025 IETF Trust and the persons identified as the
+   Copyright (c) 2026 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -127,12 +127,11 @@ Table of Contents
    evaluation mechanism, with RESTful services and cryptographic
    materials.
 
-   Federation members declare what kind Entities they are using a basic
-   OpenID Federation component called an Entity Configuration, a signed
-   JSON Web Token published in a well-known resource.  This document
-   defines new OpenID Federation Entity Types for certificate Requestors
-   and Issuers, facilitating automated discovery of an issuer's ACME
-   API.
+   Federation members declare what kind of Entities they are using a
+   basic OpenID Federation component called an Entity Configuration, a
+   signed JSON Web Token.  This document defines new OpenID Federation
+   Entity Types for certificate Requestors and Issuers, facilitating
+   automated discovery of an issuer's ACME API.
 
    X.509 Certificates can be provided to one or more such entities,
    without having pre-established any direct relationship or contract.
@@ -189,17 +188,16 @@ Table of Contents
       identifier that the ACME client proves control of to the ACME
       server.
 
-   Entity Identifier:  A URL that uniquely identifies an Entity in
-      OpenID Federation, as defined in Section 1.2 of [OPENID-FED].
+   Entity Identifier:  A globally unique string identifier that is bound
+      to one Entity in OpenID Federation, as defined in Section 1.2 of
+      [OPENID-FED].
 
    Requestor:  A Federation Entity which wants to request X.509
-      Certificates.  It operates a web server for hosting its Entity
-      Configuration.  It also operates an ACME client, extended
-      according to this document.
+      Certificates.  It operates an ACME client, extended according to
+      this document.
 
    Certificate Issuer (or Issuer):  A Federation Entity which issues
-      X.509 Certificates.  It operates a web server for hosting its
-      Entity Configuration.  It also operates an ACME server, extended
+      X.509 Certificates.  It operates an ACME server, extended
       according to this document.
 
 3.  Conventions and Definitions
@@ -213,9 +211,9 @@ Table of Contents
 4.  OpenID Federation ACME Identifier
 
    This document defines a new ACME Identifier type for OpenID
-   Federation Entities, openid-federation, whose value is the sub
-   parameter of the Requestor's Entity Configuration, as defined in
-   Section 1.2 of [OPENID-FED].
+   Federation Entities, openid-federation, whose value is the Entity
+   Identifier of the Requestor (the sub parameter of the Requestor's
+   Entity Configuration, as defined in Section 3.1.1 of [OPENID-FED]).
 
    For example, the ACME Identifier corresponding to the example Entity
    Configuration in Section 6 is:
@@ -430,12 +428,9 @@ Table of Contents
    acme_issuer in its Entity Configuration, according to Section 7.1.
 
    [OPENID-FED] describes a variety of patterns and generic mechanisms
-   for discovering Federation Entities.  This section describes how
-   Issuers may make themselves discoverable in a Federation by
-   Requestors.
-
-   TODO: include a specific section reference once
-   https://github.com/openid/federation/pull/265 lands in OPENID-FED
+   for discovering Federation Entities (see Section 17.2 of
+   [OPENID-FED]).  This section describes how Issuers may make
+   themselves discoverable in a Federation by Requestors.
 
 7.1.  Issuer Metadata
 
@@ -494,9 +489,9 @@ Table of Contents
    To do so, the Issuer includes a Subject Alternative Name extension
    containing an otherName with a type-id of id-on-
    OpenIdFederationEntityId.  The value of the name is an Octet String
-   containing the UTF-8 encoding of the Entity Identifier (i.e., the URI
-   in the corresponding openid-federation ACME Identifier from the
-   newOrder request).
+   containing the UTF-8 encoding of the Entity Identifier (i.e., the
+   corresponding openid-federation ACME Identifier from the newOrder
+   request).
 
       id-on-OpenIdFederationEntityId OBJECT IDENTIFIER ::= { id-on XXX }
 
@@ -507,7 +502,7 @@ Table of Contents
    The identity of the Requestor is verified through proof of possession
    of a private key corresponding to a public key attested within a
    Trust Chain.  The Trust Chain has an expiration time, and its content
-   MUST NOT be trusted past the expiration time (Section 10.2 of
+   MUST NOT be trusted past the expiration time (Section 10.4 of
    [OPENID-FED]).
 
    The notBefore and notAfter fields of issued certificates MUST
@@ -650,9 +645,9 @@ Table of Contents
 
    [OPENID-FED]
               Hedberg, R., Jones, M. B., Solberg, A. Å., Bradley, J., De
-              Marco, G., and V. Dzhuvinov, "OpenID Federation 1.0 -
-              draft 43", 2 June 2025,
-              <https://openid.net/specs/openid-federation-1_0-43.html>.
+              Marco, G., and V. Dzhuvinov, "OpenID Federation 1.0", 17
+              February 2026,
+              <https://openid.net/specs/openid-federation-1_0.html>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
