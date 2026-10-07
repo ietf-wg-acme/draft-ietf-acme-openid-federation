@@ -5,12 +5,12 @@
 Automated Certificate Management Environment                 G. De Marco
 Internet-Draft                                               independent
 Intended status: Standards Track                               B. Pitman
-Expires: 21 March 2027                                                  
+Expires: 10 April 2027                                                  
                                                             T. Geoghegan
                                                                  D. Cook
                                                               J.C. Jones
                                                                     ISRG
-                                                       17 September 2026
+                                                          7 October 2026
 
 
     Automatic Certificate Management Environment (ACME) with OpenID
@@ -66,7 +66,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 21 March 2027.
+   This Internet-Draft will expire on 10 April 2027.
 
 Copyright Notice
 
@@ -221,8 +221,7 @@ Table of Contents
    Identifier of the Requestor (the sub parameter of the Requestor's
    Entity Configuration, as defined in Section 3.1.1 of [OPENID-FED]).
    The hyphenated label matches the corresponding validation method
-   openid-federation-01 (Section 5).  Other multi-word ACME identifier
-   types are hyphenated as well.
+   openid-federation-01 (Section 5).
 
    For example, the ACME Identifier corresponding to the example Entity
    Configuration in Section 6 is:
