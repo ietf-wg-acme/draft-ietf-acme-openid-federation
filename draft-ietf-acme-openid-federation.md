@@ -301,7 +301,7 @@ peerTrustChain (optional, array of string):  an array of strings containing
     application protocols that use both parameters
     ({{Section 12.1.1.1 of OPENID-FED}}{: relative="#section-12.1.1.1"}).
     {{Section 4.4 of OPENID-FED}}{: relative="#section-4.4"} says the Trust
-    Anchors SHOULD be the same when both parameters appear on a JWS. This
+    Anchors SHOULD be the same when both parameters are present in a JWS header. This
     profile uses the MUST rule from those application protocols.
 
 A non-normative example for an authorization with `trustChain` and
@@ -333,14 +333,14 @@ Requestor is trusted. If the Requestor did not provide a `trustChain`, the
 Issuer MUST perform Federation Entity Discovery ({{Section 10 of OPENID-FED}}{:
 relative="#section-10"}) to obtain a Trust Chain for the Requestor.
 
-The Issuer MUST verify every Trust Chain it uses according to
+The Issuer MUST verify each Trust Chain it uses according to
 {{Section 4 of OPENID-FED}}{: relative="#section-4"}. A Requestor-supplied
 `trustChain` MUST terminate at a Trust Anchor the Issuer is configured to
 trust.
 
 If the challenge response includes `peerTrustChain`, the Issuer MUST verify
-that Trust Chain, MUST verify that it begins at the Issuer, and MUST verify
-that it terminates at a Trust Anchor the Issuer is configured to trust, as
+that Trust Chain, including that it begins at the Issuer and that
+it terminates at a Trust Anchor the Issuer is configured to trust, as
 specified for `peer_trust_chain` in
 {{Section 12.2.3 of OPENID-FED}}{: relative="#section-12.2.3"}.
 
@@ -440,7 +440,7 @@ the `acme_requestor` metadata and using the `jwks` metadata parameter.
 
 The Issuer MUST only use `acme_requestor` keys from the Requestor's Resolved
 Metadata, derived from the Trust Chain and Trust Anchor selected in
-{{metadata-evaluation}}, to validate an ACME challenge. Therefore, after
+{{metadata-evaluation}}, to validate an ACME challenge. After
 completing the challenge, the Requestor MAY remove the `acme_requestor`
 metadata from its Entity Configuration.
 
@@ -467,8 +467,8 @@ in {{Section 7.1.1 of !RFC8555}}.
 
 Requestors MUST use the ACME Directory URL from the Issuer's Resolved Metadata
 for client configuration of ACME endpoints. When the Requestor later includes
-`peerTrustChain` in a challenge response, that Trust Chain MUST be the one from
-which it derived that Resolved Metadata ({{metadata-evaluation}}).
+`peerTrustChain` in a challenge response, that Trust Chain MUST be the one used
+to derive the Resolved Metadata ({{metadata-evaluation}}).
 
 The following is a non-normative example of an Entity Configuration including
 the `acme_issuer` metadata:
@@ -512,13 +512,13 @@ corresponding to `peer_trust_chain`
 ({{Section 4.4 of OPENID-FED}}{: relative="#section-4.4"}).
 
 {{Section 4.4 of OPENID-FED}}{: relative="#section-4.4"} says that if both
-parameters are present on a JWS, the Trust Anchor for both Trust Chains SHOULD
+parameters are present in a JWS header, the Trust Anchor for both Trust Chains SHOULD
 be the same. OpenID Federation application protocols that carry both parameters
 require that the Trust Anchors MUST be the same
-({{Section 12.1.1.1 of OPENID-FED}}{: relative="#section-12.1.1.1"}).
+({{Section 12.1.1.1 of OPENID-FED}}{: relative="#section-12.1.1.1.1"}).
 This profile is such an application protocol. When both `trustChain` and
 `peerTrustChain` are present, the Issuer MUST use that shared Trust Anchor.
-Using both Trust Chains enables the Federation Integrity and Metadata Integrity
+Using both Trust Chains ensures the Federation Integrity and Metadata Integrity
 properties described in {{OPENID-FED}}.
 
 When `peerTrustChain` is present, the Issuer MUST use its Trust Anchor, provided
@@ -526,8 +526,8 @@ the Issuer is configured to trust it. When `peerTrustChain` is absent, the
 Issuer selects a Trust Anchor it is configured to trust, using `trustChain` as
 a hint when provided.
 
-The Issuer takes `acme_requestor` keys from Resolved Metadata of the Requestor
-along the Trust Chain to the selected Trust Anchor. The Requestor takes
+The Issuer takes the `acme_requestor` keys from the Resolved Metadata of the Requestor
+along the Trust Chain to the selected Trust Anchor. The Requestor takes the
 `directory_url` from Resolved Metadata of the Issuer along the Peer Trust Chain
 to that same Trust Anchor when `peerTrustChain` is used.
 
