@@ -206,8 +206,7 @@ This document defines a new ACME Identifier type for OpenID Federation Entities,
 `sub` parameter of the Requestor's Entity Configuration, as defined in
 {{Section 3.1.1 of OPENID-FED}}{: relative="#section-3.1.1"}).
 The hyphenated label matches the corresponding validation method
-`openid-federation-01` ({{challenge-type}}). Other multi-word ACME identifier
-types are hyphenated as well.
+`openid-federation-01` ({{challenge-type}}).
 
 For example, the ACME Identifier corresponding to the example Entity
 Configuration in {{requestor-metadata}} is:
