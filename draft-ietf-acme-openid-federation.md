@@ -551,25 +551,25 @@ federation and control of a federation-attested key. It does not, by itself,
 prove control of any DNS name, IP address, or other identifier that a
 Certification Authority might place in an X.509 certificate.
 
-Issuers MUST be configured with an explicit set of Trust Anchors, and MUST
+Issuers must be configured with an explicit set of Trust Anchors, and must
 reject any Trust Chain that does not terminate at one of those Trust Anchors.
-Each such Trust Anchor MUST be administered under a federation policy that is
+Each such Trust Anchor must be administered under a federation policy that is
 appropriate for the certificates the Issuer will produce, including the
-certificate profile, the population of entities that may obtain certificates,
+certificate profile, the population of entities that are eligible to obtain certificates,
 and any additional authorization criteria (for example, Trust Marks or
 federation policy constraints on `acme_requestor` metadata). A Trust Anchor
 that is acceptable for other OpenID Federation applications is not automatically
 acceptable for X.509 issuance.
 
-Requestors that discover Issuers through the federation MUST likewise be
-configured with an explicit set of Trust Anchors, and MUST authenticate a
+Requestors that discover Issuers through the federation must likewise be
+configured with an explicit set of Trust Anchors, and must authenticate a
 candidate Issuer as a federation member before using its ACME Directory
 ({{issuer-metadata}}). Automatic discovery without a configured Trust Anchor
 allows a Requestor to enroll with an attacker-controlled ACME server.
 
 OpenID Federation Entity Statements are signed JWTs. Their integrity and the
 resulting Trust Chain can be evaluated independently of the TLS channel used to
-transport them ({{OPENID-FED}}). Implementations MUST treat Trust Chain
+transport them ({{OPENID-FED}}). Implementations must treat Trust Chain
 validation, not Web PKI validation of the HTTPS server that hosts an Entity
 Configuration, as the source of trust for this challenge. TLS still provides
 confidentiality and server authentication for ACME and for Federation Entity
@@ -587,26 +587,26 @@ the account key thumbprint, rather than signing the token alone.
 That binding is especially important for this challenge type. Unlike `http-01`,
 `dns-01`, or `tls-alpn-01`, the signature that demonstrates control is sent on
 the ACME channel rather than observed on a separate validation channel. A
-Requestor that discovers Issuers automatically may be willing to complete a
+Requestor that discovers Issuers automatically might be willing to complete a
 challenge presented by an ACME server it has not preconfigured. Signing the key
 authorization prevents such a server from relaying a token issued by a different
 ACME server and reusing the Requestor's signature to obtain a certificate under
 an account the attacker controls.
 
-The `openid-federation` identifier type MUST NOT be validated except by
-`openid-federation-01`, and `openid-federation-01` MUST NOT be used to validate
+The `openid-federation` identifier type must not be validated except by
+`openid-federation-01`, and `openid-federation-01` must not be used to validate
 any other identifier type ({{identifier-type}}, {{challenge-type}}). Hosting an
 HTTP resource at an Entity Identifier URL, or completing a DNS challenge for a
 name derived from that URL, does not demonstrate federation membership. Completing
 `openid-federation-01` does not demonstrate control of a DNS name.
 
-The Issuer MUST take `acme_requestor` keys from the Requestor's Resolved
+The Issuer must take `acme_requestor` keys from the Requestor's Resolved
 Metadata after Trust Chain evaluation, not from an Entity Configuration that has
 not been bound to a trusted Trust Anchor. Federation policy along the Trust
 Chain can constrain or replace metadata. If the Requestor and the Issuer would
 derive different Resolved Metadata because they use different Trust Anchors or
 different policy, the Issuer's view is authoritative for issuance: the Issuer
-MUST NOT accept keys or other metadata from a Trust Chain that it does not
+must not accept keys or other metadata from a Trust Chain that it does not
 itself trust. A mismatch that causes issuance to fail is preferable to allowing
 the Requestor's choice of Trust Anchor to weaken the Issuer's policy.
 
@@ -614,22 +614,22 @@ the Requestor's choice of Trust Anchor to weaken the Issuer's policy.
 
 A `trustChain` supplied in the challenge response is a hint that saves the
 Issuer from performing Federation Entity Discovery. It is not a substitute for
-validation. The Issuer MUST verify every Entity Statement in a client-supplied
-Trust Chain and MUST confirm that the chain terminates at a Trust Anchor the
+validation. The Issuer must verify every Entity Statement in a client-supplied
+Trust Chain and must confirm that the chain terminates at a Trust Anchor the
 Issuer is configured to trust, exactly as it would for a chain the Issuer
 discovered itself.
 
 The `trustAnchors` field in the challenge object tells the Requestor which Trust
 Anchors the Issuer is prepared to accept. It is an optimization for the
-Requestor. The Requestor MUST NOT treat those values as Trust Anchors for its
-own discovery or authentication of the Issuer. The Issuer MUST reject a
+Requestor. The Requestor must not treat those values as Trust Anchors for its
+own discovery or authentication of the Issuer. The Issuer must reject a
 client-supplied chain that ends at a Trust Anchor it did not configure.
 
-A Trust Chain MUST NOT be relied upon past its expiration
+A Trust Chain must not be relied upon past its expiration
 ({{Section 10.4 of OPENID-FED}}{: relative="#section-10.4"}).
 {{certificate-lifecycle}} requires that the `notBefore` and `notAfter` values of
 issued certificates fall before that expiration. Separately, Issuers that reuse
-ACME authorizations for later orders ({{Section 7.1.3 of !RFC8555}}) MUST NOT
+ACME authorizations for later orders ({{Section 7.1.3 of !RFC8555}}) must not
 treat an authorization as valid after the Trust Chain that justified it has
 expired. Reusing a stale authorization would allow issuance without a current
 attestation of federation membership.
@@ -639,12 +639,12 @@ attestation of federation membership.
 This document does not define an X.509 certificate profile. Fields of issued
 certificates, including Common Name, Subject Alternative Names, Key Usage, and
 validity period, are determined by Certification Authority policy and by the
-systems those certificates must interoperate with.
+systems those certificates are intended to interoperate with.
 
 Because `openid-federation-01` validates only an `openid-federation` identifier,
 an Issuer that copies other names from a CSR, from federation metadata, or from
 local policy into the certificate is asserting identifier bindings that this
-challenge does not prove. Issuers MUST NOT include a DNS name, IP address,
+challenge does not prove. Issuers must not include a DNS name, IP address,
 email address, or other identifier in an issued certificate unless that
 identifier has been validated by an appropriate ACME challenge or is justified
 by the Issuer's certificate policy and the federation's trust framework. This
@@ -652,7 +652,7 @@ challenge type is intended as a bridge into existing, often closed, PKIs. It is
 not a substitute for domain control validation in a publicly trusted Web PKI.
 
 If the Issuer includes an `id-on-OpenIdFederationEntityId` Subject Alternative
-Name ({{openidfed-othername-id}}), the value MUST be the Entity Identifier that
+Name ({{openidfed-othername-id}}), the value must be the Entity Identifier that
 was validated. Including a different Entity Identifier would bind the
 certificate to an entity whose control was not demonstrated.
 
@@ -662,13 +662,13 @@ constraint in {{certificate-lifecycle}} limits certificate validity so that it
 does not extend beyond the Trust Chain observed at issuance, but it does not
 revoke a certificate if the Requestor later leaves the federation or if an
 attested key is compromised. Deployments that need issued certificates to follow
-federation membership after issuance MUST use the certificate lifecycle
+federation membership after issuance must use the certificate lifecycle
 mechanisms of their X.509 ecosystem, such as CRLs, OCSP, or short-lived
 certificates, according to the Issuer's certificate policy.
 
 Publishing issued certificates in the `x5c` parameter of keys in a Subordinate
 Statement ({{publish-cert}}) is a federation policy decision. Relying parties
-that consume `x5c` in that context MUST still evaluate those certificates
+that consume `x5c` in that context must still evaluate those certificates
 according to the applicable PKI and federation policy. A stale `x5c` member can
 advertise a certificate that has since expired or been revoked.
 
@@ -683,7 +683,7 @@ limits the harm of completing a challenge at such a server; it does not make
 that server safe to use for account registration, order creation, or certificate
 download.
 
-The Requestor MUST use the `directory_url` from the Issuer's Resolved Metadata,
+The Requestor must use the `directory_url` from the Issuer's Resolved Metadata,
 so that federation policy along the Trust Chain can constrain which ACME server
 the Requestor contacts.
 
@@ -692,24 +692,24 @@ the Requestor contacts.
 This protocol involves three distinct key roles: the ACME account key
 ({{!RFC8555}}), the keys published in `acme_requestor` metadata and used to sign
 challenge responses, and the subject keys in Certificate Signing Requests and
-issued certificates. These keys SHOULD be distinct. In particular, the
-cryptographic keys in the `acme_requestor` metadata SHOULD NOT be reused for any
+issued certificates. These keys should be distinct. In particular, the
+cryptographic keys in the `acme_requestor` metadata should not be reused for any
 purpose other than signing `openid-federation-01` challenge responses, including
 as Federation Entity Keys, as ACME account keys, or as the subject key of an
 issued certificate.
 
 Reusing a key across protocols requires a cross-protocol analysis. Domain
 separation for the challenge response depends on the JWS `typ` value
-"signed-acme-challenge+jwt"; verifiers MUST reject responses that omit this
+"signed-acme-challenge+jwt"; verifiers must reject responses that omit this
 `typ` or use a different value ({{?RFC8725}}). Distinct keys remain the most
 reliable defense.
 
 Compromise of an `acme_requestor` private key allows an attacker to complete
 `openid-federation-01` challenges for that Entity Identifier until the key is
 removed from the Requestor's Resolved Metadata and any authorizations granted
-under it have expired. Requestors MUST protect these private keys with at least
-the same care as ACME account keys, and SHOULD rotate them periodically. After
-a challenge has been completed, the Requestor MAY remove `acme_requestor`
+under it have expired. Requestors must protect these private keys with at least
+the same care as ACME account keys, and should rotate them periodically. After
+a challenge has been completed, the Requestor may remove `acme_requestor`
 metadata from its Entity Configuration ({{requestor-metadata}}), which limits
 the time during which the corresponding public keys are advertised.
 
@@ -718,13 +718,13 @@ the time during which the corresponding public keys are advertised.
 If the Requestor omits `trustChain`, the Issuer performs Federation Entity
 Discovery, which can cause the Issuer to make multiple outbound requests
 ({{Section 18.1 of OPENID-FED}}{: relative="#section-18.1"}). ACME account
-credentials are required to submit a challenge response, but account creation
-is often open. Issuers SHOULD prefer client-supplied Trust Chains, SHOULD bound
+credentials are needed to submit a challenge response, but account creation
+is often open. Issuers should prefer client-supplied Trust Chains, should bound
 the time, depth, and number of `authority_hints` they are willing to follow, and
-SHOULD apply the same denial-of-service controls they apply to other outbound
+should apply the same denial-of-service controls they apply to other outbound
 validation methods in {{!RFC8555}}.
 
-The `token` value in the challenge object MUST have at least 128 bits of
+The `token` value in the challenge object must have at least 128 bits of
 entropy, as specified in {{challenge-type}}, so that challenge responses cannot
 be predicted or reused across challenges.
 
