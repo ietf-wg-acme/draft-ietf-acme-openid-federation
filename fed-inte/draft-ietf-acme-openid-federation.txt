@@ -5,12 +5,12 @@
 Automated Certificate Management Environment                 G. De Marco
 Internet-Draft                                               independent
 Intended status: Standards Track                               B. Pitman
-Expires: 21 March 2027                                                  
+Expires: 10 April 2027                                                  
                                                             T. Geoghegan
                                                                  D. Cook
                                                               J.C. Jones
                                                                     ISRG
-                                                       17 September 2026
+                                                          7 October 2026
 
 
     Automatic Certificate Management Environment (ACME) with OpenID
@@ -66,7 +66,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 21 March 2027.
+   This Internet-Draft will expire on 10 April 2027.
 
 Copyright Notice
 
@@ -316,9 +316,9 @@ Table of Contents
    Anchor of both Trust Chains MUST be the same, as specified for OpenID
    Federation application protocols that use both parameters
    (Section 12.1.1.1 of [OPENID-FED]).  Section 4.4 of [OPENID-FED] says
-   the Trust Anchors SHOULD be the same when both parameters appear on a
-   JWS.  This profile uses the MUST rule from those application
-   protocols.
+   the Trust Anchors SHOULD be the same when both parameters are present
+   in a JWS header.  This profile uses the MUST rule from those
+   application protocols.
 
    A non-normative example for an authorization with trustChain and
    peerTrustChain specified:
@@ -348,15 +348,15 @@ Table of Contents
    (Section 10 of [OPENID-FED]) to obtain a Trust Chain for the
    Requestor.
 
-   The Issuer MUST verify every Trust Chain it uses according to
+   The Issuer MUST verify each Trust Chain it uses according to
    Section 4 of [OPENID-FED].  A Requestor-supplied trustChain MUST
    terminate at a Trust Anchor the Issuer is configured to trust.
 
    If the challenge response includes peerTrustChain, the Issuer MUST
-   verify that Trust Chain, MUST verify that it begins at the Issuer,
-   and MUST verify that it terminates at a Trust Anchor the Issuer is
-   configured to trust, as specified for peer_trust_chain in
-   Section 12.2.3 of [OPENID-FED].
+   verify that Trust Chain, including that it begins at the Issuer and
+   that it terminates at a Trust Anchor the Issuer is configured to
+   trust, as specified for peer_trust_chain in Section 12.2.3 of
+   [OPENID-FED].
 
    If both trustChain and peerTrustChain are present, the Issuer MUST
    verify that they terminate at the same Trust Anchor.  The Issuer MUST
@@ -454,9 +454,9 @@ Table of Contents
 
    The Issuer MUST only use acme_requestor keys from the Requestor's
    Resolved Metadata, derived from the Trust Chain and Trust Anchor
-   selected in Section 8, to validate an ACME challenge.  Therefore,
-   after completing the challenge, the Requestor MAY remove the
-   acme_requestor metadata from its Entity Configuration.
+   selected in Section 8, to validate an ACME challenge.  After
+   completing the challenge, the Requestor MAY remove the acme_requestor
+   metadata from its Entity Configuration.
 
 7.  Issuer Discovery
 
@@ -482,8 +482,8 @@ Table of Contents
    Requestors MUST use the ACME Directory URL from the Issuer's Resolved
    Metadata for client configuration of ACME endpoints.  When the
    Requestor later includes peerTrustChain in a challenge response, that
-   Trust Chain MUST be the one from which it derived that Resolved
-   Metadata (Section 8).
+   Trust Chain MUST be the one used to derive the Resolved Metadata
+   (Section 8).
 
    The following is a non-normative example of an Entity Configuration
    including the acme_issuer metadata:
@@ -524,24 +524,24 @@ Table of Contents
    (Section 4.4 of [OPENID-FED]).
 
    Section 4.4 of [OPENID-FED] says that if both parameters are present
-   on a JWS, the Trust Anchor for both Trust Chains SHOULD be the same.
-   OpenID Federation application protocols that carry both parameters
-   require that the Trust Anchors MUST be the same (Section 12.1.1.1 of
-   [OPENID-FED]).  This profile is such an application protocol.  When
-   both trustChain and peerTrustChain are present, the Issuer MUST use
-   that shared Trust Anchor.  Using both Trust Chains enables the
-   Federation Integrity and Metadata Integrity properties described in
-   [OPENID-FED].
+   in a JWS header, the Trust Anchor for both Trust Chains SHOULD be the
+   same.  OpenID Federation application protocols that carry both
+   parameters require that the Trust Anchors MUST be the same
+   (Section 12.1.1.1 of [OPENID-FED]).  This profile is such an
+   application protocol.  When both trustChain and peerTrustChain are
+   present, the Issuer MUST use that shared Trust Anchor.  Using both
+   Trust Chains ensures the Federation Integrity and Metadata Integrity
+   properties described in [OPENID-FED].
 
    When peerTrustChain is present, the Issuer MUST use its Trust Anchor,
    provided the Issuer is configured to trust it.  When peerTrustChain
    is absent, the Issuer selects a Trust Anchor it is configured to
    trust, using trustChain as a hint when provided.
 
-   The Issuer takes acme_requestor keys from Resolved Metadata of the
-   Requestor along the Trust Chain to the selected Trust Anchor.  The
-   Requestor takes directory_url from Resolved Metadata of the Issuer
-   along the Peer Trust Chain to that same Trust Anchor when
+   The Issuer takes the acme_requestor keys from the Resolved Metadata
+   of the Requestor along the Trust Chain to the selected Trust Anchor.
+   The Requestor takes the directory_url from Resolved Metadata of the
+   Issuer along the Peer Trust Chain to that same Trust Anchor when
    peerTrustChain is used.
 
 9.  Publication of the Certificates within the Federation

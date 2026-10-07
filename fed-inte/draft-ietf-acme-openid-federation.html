@@ -24,24 +24,24 @@ Federation Entity can be issued by an X.509 Certification Authority through the
 ACME protocol to the organizations which are part of a federation built on top
 of OpenID Federation 1.0. 
     " name="description">
-<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="xml2rfc 3.34.1" name="generator">
 <meta content="OpenID Federation" name="keyword">
 <meta content="ACME" name="keyword">
 <meta content="draft-ietf-acme-openid-federation-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.34.0
-    Python 3.14.7
-    ConfigArgParse 1.7.5
+  xml2rfc 3.34.1
+    Python 3.14.8
+    ConfigArgParse 1.8.0
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.11.7
+    platformdirs 4.12.2
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.8.3
+    wcwidth 0.9.1
 -->
 <link href="draft-ietf-acme-openid-federation.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1057,11 +1057,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">ACME OpenID Federation</td>
-<td class="right">September 2026</td>
+<td class="right">October 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">De Marco, et al.</td>
-<td class="center">Expires 21 March 2027</td>
+<td class="center">Expires 10 April 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1074,12 +1074,12 @@ svg {
 <dd class="internet-draft">draft-ietf-acme-openid-federation-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-09-17" class="published">17 September 2026</time>
+<time datetime="2026-10-07" class="published">7 October 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-03-21">21 March 2027</time></dd>
+<dd class="expires"><time datetime="2027-04-10">10 April 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1154,7 +1154,7 @@ of OpenID Federation 1.0.<a href="#section-abstract-3" class="pilcrow">¶</a></p
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 21 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 10 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1497,7 +1497,7 @@ format:<a href="#section-5-11" class="pilcrow">¶</a></p>
     application protocols that use both parameters
     (<span><a href="https://openid.net/specs/openid-federation-1_0.html#section-12.1.1.1" class="relref">Section 12.1.1.1</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>).
     <span><a href="https://openid.net/specs/openid-federation-1_0.html#section-4.4" class="relref">Section 4.4</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span> says the Trust
-    Anchors <span class="bcp14">SHOULD</span> be the same when both parameters appear on a JWS. This
+    Anchors <span class="bcp14">SHOULD</span> be the same when both parameters are present in a JWS header. This
     profile uses the <span class="bcp14">MUST</span> rule from those application protocols.<a href="#section-5-14" class="pilcrow">¶</a></p>
 <p id="section-5-15">A non-normative example for an authorization with <code>trustChain</code> and
 <code>peerTrustChain</code> specified:<a href="#section-5-15" class="pilcrow">¶</a></p>
@@ -1526,13 +1526,13 @@ format:<a href="#section-5-11" class="pilcrow">¶</a></p>
 <p id="section-5-17">On receiving a challenge response, the Certificate Issuer verifies that the
 Requestor is trusted. If the Requestor did not provide a <code>trustChain</code>, the
 Issuer <span class="bcp14">MUST</span> perform Federation Entity Discovery (<span><a href="https://openid.net/specs/openid-federation-1_0.html#section-10" class="relref">Section 10</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>) to obtain a Trust Chain for the Requestor.<a href="#section-5-17" class="pilcrow">¶</a></p>
-<p id="section-5-18">The Issuer <span class="bcp14">MUST</span> verify every Trust Chain it uses according to
+<p id="section-5-18">The Issuer <span class="bcp14">MUST</span> verify each Trust Chain it uses according to
 <span><a href="https://openid.net/specs/openid-federation-1_0.html#section-4" class="relref">Section 4</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>. A Requestor-supplied
 <code>trustChain</code> <span class="bcp14">MUST</span> terminate at a Trust Anchor the Issuer is configured to
 trust.<a href="#section-5-18" class="pilcrow">¶</a></p>
 <p id="section-5-19">If the challenge response includes <code>peerTrustChain</code>, the Issuer <span class="bcp14">MUST</span> verify
-that Trust Chain, <span class="bcp14">MUST</span> verify that it begins at the Issuer, and <span class="bcp14">MUST</span> verify
-that it terminates at a Trust Anchor the Issuer is configured to trust, as
+that Trust Chain, including that it begins at the Issuer and that
+it terminates at a Trust Anchor the Issuer is configured to trust, as
 specified for <code>peer_trust_chain</code> in
 <span><a href="https://openid.net/specs/openid-federation-1_0.html#section-12.2.3" class="relref">Section 12.2.3</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>.<a href="#section-5-19" class="pilcrow">¶</a></p>
 <p id="section-5-20">If both <code>trustChain</code> and <code>peerTrustChain</code> are present, the Issuer <span class="bcp14">MUST</span> verify
@@ -1636,7 +1636,7 @@ the <code>acme_requestor</code> metadata and using the <code>jwks</code> metadat
 </div>
 <p id="section-6-4">The Issuer <span class="bcp14">MUST</span> only use <code>acme_requestor</code> keys from the Requestor's Resolved
 Metadata, derived from the Trust Chain and Trust Anchor selected in
-<a href="#metadata-evaluation" class="auto internal xref">Section 8</a>, to validate an ACME challenge. Therefore, after
+<a href="#metadata-evaluation" class="auto internal xref">Section 8</a>, to validate an ACME challenge. After
 completing the challenge, the Requestor <span class="bcp14">MAY</span> remove the <code>acme_requestor</code>
 metadata from its Entity Configuration.<a href="#section-6-4" class="pilcrow">¶</a></p>
 </section>
@@ -1665,8 +1665,8 @@ parameter, <code>directory_url</code>, which is the URL of the ACME Directory, a
 in <span><a href="https://rfc-editor.org/rfc/rfc8555#section-7.1.1" class="relref">Section 7.1.1</a> of [<a href="#RFC8555" class="cite xref">RFC8555</a>]</span>.<a href="#section-7.1-1" class="pilcrow">¶</a></p>
 <p id="section-7.1-2">Requestors <span class="bcp14">MUST</span> use the ACME Directory URL from the Issuer's Resolved Metadata
 for client configuration of ACME endpoints. When the Requestor later includes
-<code>peerTrustChain</code> in a challenge response, that Trust Chain <span class="bcp14">MUST</span> be the one from
-which it derived that Resolved Metadata (<a href="#metadata-evaluation" class="auto internal xref">Section 8</a>).<a href="#section-7.1-2" class="pilcrow">¶</a></p>
+<code>peerTrustChain</code> in a challenge response, that Trust Chain <span class="bcp14">MUST</span> be the one used
+to derive the Resolved Metadata (<a href="#metadata-evaluation" class="auto internal xref">Section 8</a>).<a href="#section-7.1-2" class="pilcrow">¶</a></p>
 <p id="section-7.1-3">The following is a non-normative example of an Entity Configuration including
 the <code>acme_issuer</code> metadata:<a href="#section-7.1-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.1-4">
@@ -1714,20 +1714,20 @@ to a Trust Anchor, corresponding to <code>trust_chain</code>
 corresponding to <code>peer_trust_chain</code>
 (<span><a href="https://openid.net/specs/openid-federation-1_0.html#section-4.4" class="relref">Section 4.4</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>).<a href="#section-8-2" class="pilcrow">¶</a></p>
 <p id="section-8-3"><span><a href="https://openid.net/specs/openid-federation-1_0.html#section-4.4" class="relref">Section 4.4</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span> says that if both
-parameters are present on a JWS, the Trust Anchor for both Trust Chains <span class="bcp14">SHOULD</span>
+parameters are present in a JWS header, the Trust Anchor for both Trust Chains <span class="bcp14">SHOULD</span>
 be the same. OpenID Federation application protocols that carry both parameters
 require that the Trust Anchors <span class="bcp14">MUST</span> be the same
-(<span><a href="https://openid.net/specs/openid-federation-1_0.html#section-12.1.1.1" class="relref">Section 12.1.1.1</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>).
+(<span><a href="https://openid.net/specs/openid-federation-1_0.html#section-12.1.1.1.1" class="relref">Section 12.1.1.1</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>).
 This profile is such an application protocol. When both <code>trustChain</code> and
 <code>peerTrustChain</code> are present, the Issuer <span class="bcp14">MUST</span> use that shared Trust Anchor.
-Using both Trust Chains enables the Federation Integrity and Metadata Integrity
+Using both Trust Chains ensures the Federation Integrity and Metadata Integrity
 properties described in <span>[<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>.<a href="#section-8-3" class="pilcrow">¶</a></p>
 <p id="section-8-4">When <code>peerTrustChain</code> is present, the Issuer <span class="bcp14">MUST</span> use its Trust Anchor, provided
 the Issuer is configured to trust it. When <code>peerTrustChain</code> is absent, the
 Issuer selects a Trust Anchor it is configured to trust, using <code>trustChain</code> as
 a hint when provided.<a href="#section-8-4" class="pilcrow">¶</a></p>
-<p id="section-8-5">The Issuer takes <code>acme_requestor</code> keys from Resolved Metadata of the Requestor
-along the Trust Chain to the selected Trust Anchor. The Requestor takes
+<p id="section-8-5">The Issuer takes the <code>acme_requestor</code> keys from the Resolved Metadata of the Requestor
+along the Trust Chain to the selected Trust Anchor. The Requestor takes the
 <code>directory_url</code> from Resolved Metadata of the Issuer along the Peer Trust Chain
 to that same Trust Anchor when <code>peerTrustChain</code> is used.<a href="#section-8-5" class="pilcrow">¶</a></p>
 </section>
