@@ -24,24 +24,24 @@ Federation Entity can be issued by an X.509 Certification Authority through the
 ACME protocol to the organizations which are part of a federation built on top
 of OpenID Federation 1.0. 
     " name="description">
-<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="xml2rfc 3.34.1" name="generator">
 <meta content="OpenID Federation" name="keyword">
 <meta content="ACME" name="keyword">
 <meta content="draft-ietf-acme-openid-federation-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.34.0
-    Python 3.14.7
-    ConfigArgParse 1.7.5
+  xml2rfc 3.34.1
+    Python 3.14.8
+    ConfigArgParse 1.8.0
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.11.7
+    platformdirs 4.12.2
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.8.3
+    wcwidth 0.9.1
 -->
 <link href="draft-ietf-acme-openid-federation.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1057,11 +1057,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">ACME OpenID Federation</td>
-<td class="right">September 2026</td>
+<td class="right">October 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">De Marco, et al.</td>
-<td class="center">Expires 21 March 2027</td>
+<td class="center">Expires 10 April 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1074,12 +1074,12 @@ svg {
 <dd class="internet-draft">draft-ietf-acme-openid-federation-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-09-17" class="published">17 September 2026</time>
+<time datetime="2026-10-07" class="published">7 October 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-03-21">21 March 2027</time></dd>
+<dd class="expires"><time datetime="2027-04-10">10 April 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1154,7 +1154,7 @@ of OpenID Federation 1.0.<a href="#section-abstract-3" class="pilcrow">¶</a></p
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 21 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 10 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1385,6 +1385,10 @@ server, extended according to this document.<a href="#section-2-4.8.1" class="pi
 "<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
 described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
 appear in all capitals, as shown here.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">JSON member names defined by this document follow the convention of the protocol
+they extend. Members of ACME objects, including challenge objects, challenge
+responses, and problem documents, use camelCase as in <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>]</span>. Members of
+OpenID Federation Entity Type metadata use snake_case as in <span>[<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>.<a href="#section-3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="identifier-type">
@@ -1395,7 +1399,9 @@ appear in all capitals, as shown here.<a href="#section-3-1" class="pilcrow">¶<
 <p id="section-4-1">This document defines a new ACME Identifier type for OpenID Federation Entities,
 <code>openid-federation</code>, whose value is the Entity Identifier of the Requestor (the
 <code>sub</code> parameter of the Requestor's Entity Configuration, as defined in
-<span><a href="https://openid.net/specs/openid-federation-1_0.html#section-3.1.1" class="relref">Section 3.1.1</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>).<a href="#section-4-1" class="pilcrow">¶</a></p>
+<span><a href="https://openid.net/specs/openid-federation-1_0.html#section-3.1.1" class="relref">Section 3.1.1</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>).
+The hyphenated label matches the corresponding validation method
+<code>openid-federation-01</code> (<a href="#challenge-type" class="auto internal xref">Section 5</a>).<a href="#section-4-1" class="pilcrow">¶</a></p>
 <p id="section-4-2">For example, the ACME Identifier corresponding to the example Entity
 Configuration in <a href="#requestor-metadata" class="auto internal xref">Section 6</a> is:<a href="#section-4-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4-3">
@@ -1722,7 +1728,7 @@ encapsulate any OAuth error code returned while resolving OpenID Federation
 Entities. The title of this error type is "OpenID Federation Error". The
 <code>detail</code> member of the problem document <span class="bcp14">MAY</span> include the description of the
 particular OAuth error code that caused the error. The problem document for this
-error type <span class="bcp14">SHOULD</span> include an extension member named <code>error_code</code>, which <span class="bcp14">MUST</span> be
+error type <span class="bcp14">SHOULD</span> include an extension member named <code>errorCode</code>, which <span class="bcp14">MUST</span> be
 set to the OAuth error code, taken from the error codes defined in
 <span><a href="https://openid.net/specs/openid-federation-1_0.html#section-8.9" class="relref">Section 8.9</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>.<a href="#section-11-2" class="pilcrow">¶</a></p>
 <p id="section-11-3">The error type <code>urn:ietf:params:acme:error:openIDFederationCertificateValidity</code>

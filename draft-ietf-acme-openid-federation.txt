@@ -5,12 +5,12 @@
 Automated Certificate Management Environment                 G. De Marco
 Internet-Draft                                               independent
 Intended status: Standards Track                               B. Pitman
-Expires: 21 March 2027                                                  
+Expires: 10 April 2027                                                  
                                                             T. Geoghegan
                                                                  D. Cook
                                                               J.C. Jones
                                                                     ISRG
-                                                       17 September 2026
+                                                          7 October 2026
 
 
     Automatic Certificate Management Environment (ACME) with OpenID
@@ -66,7 +66,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 21 March 2027.
+   This Internet-Draft will expire on 10 April 2027.
 
 Copyright Notice
 
@@ -208,12 +208,20 @@ Table of Contents
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
+   JSON member names defined by this document follow the convention of
+   the protocol they extend.  Members of ACME objects, including
+   challenge objects, challenge responses, and problem documents, use
+   camelCase as in [RFC8555].  Members of OpenID Federation Entity Type
+   metadata use snake_case as in [OPENID-FED].
+
 4.  OpenID Federation ACME Identifier
 
    This document defines a new ACME Identifier type for OpenID
    Federation Entities, openid-federation, whose value is the Entity
    Identifier of the Requestor (the sub parameter of the Requestor's
    Entity Configuration, as defined in Section 3.1.1 of [OPENID-FED]).
+   The hyphenated label matches the corresponding validation method
+   openid-federation-01 (Section 5).
 
    For example, the ACME Identifier corresponding to the example Entity
    Configuration in Section 6 is:
@@ -523,9 +531,9 @@ Table of Contents
    Federation Error".  The detail member of the problem document MAY
    include the description of the particular OAuth error code that
    caused the error.  The problem document for this error type SHOULD
-   include an extension member named error_code, which MUST be set to
-   the OAuth error code, taken from the error codes defined in
-   Section 8.9 of [OPENID-FED].
+   include an extension member named errorCode, which MUST be set to the
+   OAuth error code, taken from the error codes defined in Section 8.9
+   of [OPENID-FED].
 
    The error type
    urn:ietf:params:acme:error:openIDFederationCertificateValidity is
