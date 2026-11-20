@@ -505,12 +505,11 @@ the `newOrder` request).
 
 # Trust Chain Expiration and Authorization Lifetime {#trust-chain-expiration}
 
-<a id="certificate-lifecycle"></a>
-
 The identity of the Requestor is verified through proof of possession of a
 private key corresponding to a public key attested within a Trust Chain. The
 Trust Chain has an expiration time, and its content MUST NOT be trusted past the
 expiration time ({{Section 10.4 of OPENID-FED}}{: relative="#section-10.4"}).
+{: #certificate-lifecycle}
 
 A successful `openid-federation-01` challenge results in an ACME authorization
 ({{Section 7.1.4 of !RFC8555}}) whose federation-membership evidence is the Trust
