@@ -24,24 +24,24 @@ Federation Entity can be issued by an X.509 Certification Authority through the
 ACME protocol to the organizations which are part of a federation built on top
 of OpenID Federation 1.0. 
     " name="description">
-<meta content="xml2rfc 3.34.1" name="generator">
+<meta content="xml2rfc 3.35.0" name="generator">
 <meta content="OpenID Federation" name="keyword">
 <meta content="ACME" name="keyword">
 <meta content="draft-ietf-acme-openid-federation-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.34.1
-    Python 3.14.8
-    ConfigArgParse 1.8.0
+  xml2rfc 3.35.0
+    Python 3.14.10
+    ConfigArgParse 1.10.1
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.12.2
+    platformdirs 4.14.7
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.9.1
+    wcwidth 0.9.4
 -->
 <link href="draft-ietf-acme-openid-federation.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1042,7 +1042,7 @@ svg {
   & :is([stroke="white"], [stroke^="#fff"]) {
     stroke: var(--background-color);
   }
-  & :is([fill="black"], [fill^="#000"], :not([fill])) {
+  & :is([fill="black"], [fill^="#000"], :not([fill], [fill] *)) {
     fill: var(--text-color);
   }
   & :is([fill="white"], [fill^="#fff"]) {
@@ -1057,11 +1057,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">ACME OpenID Federation</td>
-<td class="right">October 2026</td>
+<td class="right">November 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">De Marco, et al.</td>
-<td class="center">Expires 10 April 2027</td>
+<td class="center">Expires 24 May 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1074,12 +1074,12 @@ svg {
 <dd class="internet-draft">draft-ietf-acme-openid-federation-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-10-07" class="published">7 October 2026</time>
+<time datetime="2026-11-20" class="published">20 November 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-04-10">10 April 2027</time></dd>
+<dd class="expires"><time datetime="2027-05-24">24 May 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1154,7 +1154,7 @@ of OpenID Federation 1.0.<a href="#section-abstract-3" class="pilcrow">¶</a></p
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 10 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 24 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1216,7 +1216,7 @@ of OpenID Federation 1.0.<a href="#section-abstract-3" class="pilcrow">¶</a></p
             <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-csr-and-certificate-fields" class="internal xref">CSR and Certificate Fields</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-certificate-lifecycle" class="internal xref">Certificate Lifecycle</a></p>
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-trust-chain-expiration-and-" class="internal xref">Trust Chain Expiration and Authorization Lifetime</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
             <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-errors" class="internal xref">Errors</a></p>
@@ -1735,20 +1735,31 @@ the <code>newOrder</code> request).<a href="#section-9-2" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
-<div id="certificate-lifecycle">
+<div id="trust-chain-expiration">
 <section id="section-10">
-      <h2 id="name-certificate-lifecycle">
-<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-certificate-lifecycle" class="section-name selfRef">Certificate Lifecycle</a>
+      <h2 id="name-trust-chain-expiration-and-">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-trust-chain-expiration-and-" class="section-name selfRef">Trust Chain Expiration and Authorization Lifetime</a>
       </h2>
+<div id="certificate-lifecycle">
 <p id="section-10-1">The identity of the Requestor is verified through proof of possession of a
 private key corresponding to a public key attested within a Trust Chain. The
 Trust Chain has an expiration time, and its content <span class="bcp14">MUST NOT</span> be trusted past the
 expiration time (<span><a href="https://openid.net/specs/openid-federation-1_0.html#section-10.4" class="relref">Section 10.4</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>).<a href="#section-10-1" class="pilcrow">¶</a></p>
-<p id="section-10-2">The <code>notBefore</code> and <code>notAfter</code> fields of issued certificates <span class="bcp14">MUST</span> represent
-dates before the Trust Chain's expiration time. If the Requestor's newOrder
-request (<span><a href="https://rfc-editor.org/rfc/rfc8555#section-7.4" class="relref">Section 7.4</a> of [<a href="#RFC8555" class="cite xref">RFC8555</a>]</span>) contains <code>notAfter</code> or <code>notBefore</code> fields
-that make this impossible, the Certificate Issuer <span class="bcp14">MUST</span> reply with an error of
-type <code>urn:ietf:params:acme:error:openIDFederationCertificateValidity</code>.<a href="#section-10-2" class="pilcrow">¶</a></p>
+</div>
+<p id="section-10-2">A successful <code>openid-federation-01</code> challenge results in an ACME authorization
+(<span><a href="https://rfc-editor.org/rfc/rfc8555#section-7.1.4" class="relref">Section 7.1.4</a> of [<a href="#RFC8555" class="cite xref">RFC8555</a>]</span>) whose federation-membership evidence is the Trust
+Chain used to validate the challenge. Since the content of the Trust Chain cannot
+be trusted after its expiration time, the Certificate Issuer <span class="bcp14">MUST</span> set the
+<code>expires</code> field of such an authorization to a time no later than the expiration
+time of that Trust Chain.<a href="#section-10-2" class="pilcrow">¶</a></p>
+<p id="section-10-3">According to <span><a href="https://rfc-editor.org/rfc/rfc8555#section-7.1.6" class="relref">Section 7.1.6</a> of [<a href="#RFC8555" class="cite xref">RFC8555</a>]</span>, after the <code>expires</code> time the
+authorization moves to the "expired" state. An order that has not yet been
+finalized and that still depends on that authorization then moves to the
+"invalid" state. A later order for the same ACME Identifier therefore requires a
+new authorization, validated with a Trust Chain that has not expired.<a href="#section-10-3" class="pilcrow">¶</a></p>
+<p id="section-10-4">The validity period and the lifecycle of the issued certificate are determined
+by the certificate profile and by the policy of the Certificate Issuer, and are
+out of scope for this document.<a href="#section-10-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="error-type">
@@ -1756,7 +1767,7 @@ type <code>urn:ietf:params:acme:error:openIDFederationCertificateValidity</code>
       <h2 id="name-errors">
 <a href="#section-11" class="section-number selfRef">11. </a><a href="#name-errors" class="section-name selfRef">Errors</a>
       </h2>
-<p id="section-11-1">This document defines two new error type URIs to be used in problem documents
+<p id="section-11-1">This document defines a new error type URI to be used in problem documents
 <span>[<a href="#RFC9457" class="cite xref">RFC9457</a>]</span>, as described in <span><a href="https://rfc-editor.org/rfc/rfc8555#section-6.7" class="relref">Section 6.7</a> of [<a href="#RFC8555" class="cite xref">RFC8555</a>]</span>.<a href="#section-11-1" class="pilcrow">¶</a></p>
 <p id="section-11-2">The error type <code>urn:ietf:params:acme:error:openIDFederationEntity</code> is used to
 encapsulate any OAuth error code returned while resolving OpenID Federation
@@ -1766,10 +1777,6 @@ particular OAuth error code that caused the error. The problem document for this
 error type <span class="bcp14">SHOULD</span> include an extension member named <code>errorCode</code>, which <span class="bcp14">MUST</span> be
 set to the OAuth error code, taken from the error codes defined in
 <span><a href="https://openid.net/specs/openid-federation-1_0.html#section-8.9" class="relref">Section 8.9</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>.<a href="#section-11-2" class="pilcrow">¶</a></p>
-<p id="section-11-3">The error type <code>urn:ietf:params:acme:error:openIDFederationCertificateValidity</code>
-is used to indicate that a Certificate could not be issued because of a mismatch
-between the requested period of validity and the expiration of the OpenID
-Federation Trust Chain.<a href="#section-11-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-considerations">
@@ -1875,7 +1882,7 @@ own discovery or authentication of the Issuer. The Issuer must reject a
 client-supplied chain that ends at a Trust Anchor it did not configure.<a href="#section-12.3-2" class="pilcrow">¶</a></p>
 <p id="section-12.3-3">A Trust Chain must not be relied upon past its expiration
 (<span><a href="https://openid.net/specs/openid-federation-1_0.html#section-10.4" class="relref">Section 10.4</a> of [<a href="#OPENID-FED" class="cite xref">OPENID-FED</a>]</span>).
-<a href="#certificate-lifecycle" class="auto internal xref">Section 10</a> requires that the <code>notBefore</code> and <code>notAfter</code> values of
+<a href="#certificate-lifecycle" class="auto internal xref">Section 10, Paragraph 1</a> requires that the <code>notBefore</code> and <code>notAfter</code> values of
 issued certificates fall before that expiration. Separately, Issuers that reuse
 ACME authorizations for later orders (<span><a href="https://rfc-editor.org/rfc/rfc8555#section-7.1.3" class="relref">Section 7.1.3</a> of [<a href="#RFC8555" class="cite xref">RFC8555</a>]</span>) must not
 treat an authorization as valid after the Trust Chain that justified it has
@@ -1907,7 +1914,7 @@ was validated. Including a different Entity Identifier would bind the
 certificate to an entity whose control was not demonstrated.<a href="#section-12.4-3" class="pilcrow">¶</a></p>
 <p id="section-12.4-4">Successful validation attests federation membership and key control at
 validation time. It does not, by itself, track later changes in membership. The
-constraint in <a href="#certificate-lifecycle" class="auto internal xref">Section 10</a> limits certificate validity so that it
+constraint in <a href="#certificate-lifecycle" class="auto internal xref">Section 10, Paragraph 1</a> limits certificate validity so that it
 does not extend beyond the Trust Chain observed at issuance, but it does not
 revoke a certificate if the Requestor later leaves the federation or if an
 attested key is compromised. Deployments that need issued certificates to follow
@@ -1983,6 +1990,17 @@ validation methods in <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>]</
 <p id="section-12.7-2">The <code>token</code> value in the challenge object must have at least 128 bits of
 entropy, as specified in <a href="#challenge-type" class="auto internal xref">Section 5</a>, so that challenge responses cannot
 be predicted or reused across challenges.<a href="#section-12.7-2" class="pilcrow">¶</a></p>
+<p id="section-12.7-3">The <code>expires</code> field of the authorization resulting from an
+<code>openid-federation-01</code> challenge bounds how long the Certificate Issuer relies
+on a given Trust Chain (<a href="#trust-chain-expiration" class="auto internal xref">Section 10</a>). As with the other ACME
+challenge types, the challenge proves control of the ACME Identifier at a point
+in time, while the issued certificate remains valid for the period set by the
+Certificate Issuer, and what happens to the certificate afterwards is handled by
+the X.509 ecosystem in which the certificate is used.<a href="#section-12.7-3" class="pilcrow">¶</a></p>
+<p id="section-12.7-4">Deployments that want the lifecycle of the issued certificates to be bound to the
+federation membership of the Requestor could rely on the certificate lifecycle
+mechanisms of that ecosystem, according to the applicable certificate policy.
+Those mechanisms are outside the scope of this document.<a href="#section-12.7-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2073,11 +2091,6 @@ in <span><a href="https://rfc-editor.org/rfc/rfc8555#section-9.7.4" class="relre
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">openIDFederationEntity</td>
                 <td class="text-left" rowspan="1" colspan="1">An error occurred while resolving an OpenID Federation entity</td>
-                <td class="text-left" rowspan="1" colspan="1">this document</td>
-              </tr>
-              <tr>
-                <td class="text-left" rowspan="1" colspan="1">openIDFederationCertificateValidity</td>
-                <td class="text-left" rowspan="1" colspan="1">A certificate was requested whose validity period is not before the OpenID Federation Trust Chain's expiry</td>
                 <td class="text-left" rowspan="1" colspan="1">this document</td>
               </tr>
             </tbody>

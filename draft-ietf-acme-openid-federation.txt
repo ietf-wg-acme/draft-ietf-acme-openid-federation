@@ -5,12 +5,12 @@
 Automated Certificate Management Environment                 G. De Marco
 Internet-Draft                                               independent
 Intended status: Standards Track                               B. Pitman
-Expires: 10 April 2027                                                  
+Expires: 24 May 2027                                                    
                                                             T. Geoghegan
                                                                  D. Cook
                                                               J.C. Jones
                                                                     ISRG
-                                                          7 October 2026
+                                                        20 November 2026
 
 
     Automatic Certificate Management Environment (ACME) with OpenID
@@ -66,7 +66,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 April 2027.
+   This Internet-Draft will expire on 24 May 2027.
 
 Copyright Notice
 
@@ -94,7 +94,7 @@ Table of Contents
      7.1.  Issuer Metadata
    8.  Publication of the Certificates within the Federation
    9.  CSR and Certificate Fields
-   10. Certificate Lifecycle
+   10. Trust Chain Expiration and Authorization Lifetime
    11. Errors
    12. Security Considerations
      12.1.  Trust Model
@@ -526,7 +526,7 @@ Table of Contents
 
       OpenIdFederationEntityId ::= UTF8String
 
-10.  Certificate Lifecycle
+10.  Trust Chain Expiration and Authorization Lifetime
 
    The identity of the Requestor is verified through proof of possession
    of a private key corresponding to a public key attested within a
@@ -534,16 +534,28 @@ Table of Contents
    MUST NOT be trusted past the expiration time (Section 10.4 of
    [OPENID-FED]).
 
-   The notBefore and notAfter fields of issued certificates MUST
-   represent dates before the Trust Chain's expiration time.  If the
-   Requestor's newOrder request (Section 7.4 of [RFC8555]) contains
-   notAfter or notBefore fields that make this impossible, the
-   Certificate Issuer MUST reply with an error of type
-   urn:ietf:params:acme:error:openIDFederationCertificateValidity.
+   A successful openid-federation-01 challenge results in an ACME
+   authorization (Section 7.1.4 of [RFC8555]) whose federation-
+   membership evidence is the Trust Chain used to validate the
+   challenge.  Since the content of the Trust Chain cannot be trusted
+   after its expiration time, the Certificate Issuer MUST set the
+   expires field of such an authorization to a time no later than the
+   expiration time of that Trust Chain.
+
+   According to Section 7.1.6 of [RFC8555], after the expires time the
+   authorization moves to the "expired" state.  An order that has not
+   yet been finalized and that still depends on that authorization then
+   moves to the "invalid" state.  A later order for the same ACME
+   Identifier therefore requires a new authorization, validated with a
+   Trust Chain that has not expired.
+
+   The validity period and the lifecycle of the issued certificate are
+   determined by the certificate profile and by the policy of the
+   Certificate Issuer, and are out of scope for this document.
 
 11.  Errors
 
-   This document defines two new error type URIs to be used in problem
+   This document defines a new error type URI to be used in problem
    documents [RFC9457], as described in Section 6.7 of [RFC8555].
 
    The error type urn:ietf:params:acme:error:openIDFederationEntity is
@@ -555,12 +567,6 @@ Table of Contents
    include an extension member named errorCode, which MUST be set to the
    OAuth error code, taken from the error codes defined in Section 8.9
    of [OPENID-FED].
-
-   The error type
-   urn:ietf:params:acme:error:openIDFederationCertificateValidity is
-   used to indicate that a Certificate could not be issued because of a
-   mismatch between the requested period of validity and the expiration
-   of the OpenID Federation Trust Chain.
 
 12.  Security Considerations
 
@@ -670,13 +676,13 @@ Table of Contents
    at a Trust Anchor it did not configure.
 
    A Trust Chain must not be relied upon past its expiration
-   (Section 10.4 of [OPENID-FED]).  Section 10 requires that the
-   notBefore and notAfter values of issued certificates fall before that
-   expiration.  Separately, Issuers that reuse ACME authorizations for
-   later orders (Section 7.1.3 of [RFC8555]) must not treat an
-   authorization as valid after the Trust Chain that justified it has
-   expired.  Reusing a stale authorization would allow issuance without
-   a current attestation of federation membership.
+   (Section 10.4 of [OPENID-FED]).  Section 10, Paragraph 1 requires
+   that the notBefore and notAfter values of issued certificates fall
+   before that expiration.  Separately, Issuers that reuse ACME
+   authorizations for later orders (Section 7.1.3 of [RFC8555]) must not
+   treat an authorization as valid after the Trust Chain that justified
+   it has expired.  Reusing a stale authorization would allow issuance
+   without a current attestation of federation membership.
 
 12.4.  Certification Authority Policy
 
@@ -705,14 +711,15 @@ Table of Contents
 
    Successful validation attests federation membership and key control
    at validation time.  It does not, by itself, track later changes in
-   membership.  The constraint in Section 10 limits certificate validity
-   so that it does not extend beyond the Trust Chain observed at
-   issuance, but it does not revoke a certificate if the Requestor later
-   leaves the federation or if an attested key is compromised.
-   Deployments that need issued certificates to follow federation
-   membership after issuance must use the certificate lifecycle
-   mechanisms of their X.509 ecosystem, such as CRLs, OCSP, or short-
-   lived certificates, according to the Issuer's certificate policy.
+   membership.  The constraint in Section 10, Paragraph 1 limits
+   certificate validity so that it does not extend beyond the Trust
+   Chain observed at issuance, but it does not revoke a certificate if
+   the Requestor later leaves the federation or if an attested key is
+   compromised.  Deployments that need issued certificates to follow
+   federation membership after issuance must use the certificate
+   lifecycle mechanisms of their X.509 ecosystem, such as CRLs, OCSP, or
+   short-lived certificates, according to the Issuer's certificate
+   policy.
 
    Publishing issued certificates in the x5c parameter of keys in a
    Subordinate Statement (Section 8) is a federation policy decision.
@@ -780,6 +787,21 @@ Table of Contents
    of entropy, as specified in Section 5, so that challenge responses
    cannot be predicted or reused across challenges.
 
+   The expires field of the authorization resulting from an openid-
+   federation-01 challenge bounds how long the Certificate Issuer relies
+   on a given Trust Chain (Section 10).  As with the other ACME
+   challenge types, the challenge proves control of the ACME Identifier
+   at a point in time, while the issued certificate remains valid for
+   the period set by the Certificate Issuer, and what happens to the
+   certificate afterwards is handled by the X.509 ecosystem in which the
+   certificate is used.
+
+   Deployments that want the lifecycle of the issued certificates to be
+   bound to the federation membership of the Requestor could rely on the
+   certificate lifecycle mechanisms of that ecosystem, according to the
+   applicable certificate policy.  Those mechanisms are outside the
+   scope of this document.
+
 13.  IANA Considerations
 
    IANA is kindly asked to make the following updates to registries:
@@ -824,26 +846,13 @@ Table of Contents
    in Section 9.7.4 of [RFC8555], the entry below, as specified here in
    Section 11:
 
-   +=====================================+================+===========+
-   | Type                                | Description    | Reference |
-   +=====================================+================+===========+
-   | openIDFederationEntity              | An error       | this      |
-   |                                     | occurred while | document  |
-   |                                     | resolving an   |           |
-   |                                     | OpenID         |           |
-   |                                     | Federation     |           |
-   |                                     | entity         |           |
-   +-------------------------------------+----------------+-----------+
-   | openIDFederationCertificateValidity | A certificate  | this      |
-   |                                     | was requested  | document  |
-   |                                     | whose validity |           |
-   |                                     | period is not  |           |
-   |                                     | before the     |           |
-   |                                     | OpenID         |           |
-   |                                     | Federation     |           |
-   |                                     | Trust Chain's  |           |
-   |                                     | expiry         |           |
-   +-------------------------------------+----------------+-----------+
+     +========================+=========================+===========+
+     | Type                   | Description             | Reference |
+     +========================+=========================+===========+
+     | openIDFederationEntity | An error occurred while | this      |
+     |                        | resolving an OpenID     | document  |
+     |                        | Federation entity       |           |
+     +------------------------+-------------------------+-----------+
 
                                  Table 3
 
