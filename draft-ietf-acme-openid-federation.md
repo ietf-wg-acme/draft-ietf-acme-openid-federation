@@ -505,6 +505,8 @@ the `newOrder` request).
 
 # Trust Chain Expiration and Authorization Lifetime {#trust-chain-expiration}
 
+<a id="certificate-lifecycle"></a>
+
 The identity of the Requestor is verified through proof of possession of a
 private key corresponding to a public key attested within a Trust Chain. The
 Trust Chain has an expiration time, and its content MUST NOT be trusted past the
