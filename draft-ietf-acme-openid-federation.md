@@ -27,6 +27,12 @@ author:
     ins: G. De Marco
     organization: independent
     email: demarcog83@gmail.com
+
+contributor:
+ -
+    name: Ameer Ghani
+    org: ISRG
+    email: inahga@letsencrypt.org
  -
     name: Brandon Pitman
     email: bran@bran.land
@@ -42,12 +48,6 @@ author:
     name: J.C. Jones
     org: ISRG
     email: ietf@insufficient.coffee
-
-contributor:
- -
-    name: Ameer Ghani
-    org: ISRG
-    email: inahga@letsencrypt.org
 
 normative:
   OPENID-FED:
